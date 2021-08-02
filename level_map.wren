@@ -3,24 +3,20 @@ import "graphics" for ImageData
 import "math" for Math
 import "./layer_type" for LayerType
 
-class Level {
-    construct new(levelName) {
-        _levelData = Json.load("assets/%(levelName).json")
-        var tileSheetData =  _levelData["tilesets"][0] // Assuming I only use single tilesheet
+class LevelMap {
+    construct new(mapName) {
+        _mapData = Json.load("assets/%(mapName).json")
+        var tileSheetData =  _mapData["tilesets"][0] // Assuming there is only a single tilesheet/level
         _tileSheet = ImageData.loadFromFile("assets/%(tileSheetData["image"])")
         _tileSheetH = tileSheetData["imageheight"]
         _tileSheetW = tileSheetData["imagewidth"]
         _tileH = tileSheetData["tileheight"]
         _tileW = tileSheetData["tilewidth"]
-        _levelHeight = _levelData["height"]
-        _levelWidth = _levelData["width"]
-        _layers = _levelData["layers"]
+        _mapHeight = _mapData["height"]
+        _mapWidth = _mapData["width"]
+        _layers = _mapData["layers"]
         _rows = Math.floor(_tileSheetW/_tileW)
         _cols = Math.floor(_tileSheetH/_tileH)
-    }
-
-    load(levelName) {
-
     }
 
     draw(x, y) {
@@ -28,8 +24,8 @@ class Level {
         var startY = y
         for(layer in _layers) {
             var index = 0        
-            for(levelY in 0...(_levelHeight)) {
-                for(levelX in 0...(_levelWidth)) {
+            for(mapYV in 0...(_mapHeight)) {
+                for(mapXV in 0...(_mapWidth)) {
                     if((layer["type"] == LayerType.Tile) && (layer["visible"] == true)) {
                         var tileIndex = layer["data"][index]
                         if (tileIndex > 0) {

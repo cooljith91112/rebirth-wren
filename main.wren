@@ -6,12 +6,14 @@ import "math" for Math
 import "config" for Config
 import "input" for Keyboard
 import "./controls" for Controls
-import "./level" for Level
+import "./game_state" for GameState
+import "./levels/level1" for Level1
 
 class Main {
     construct new() {
         Config.setup()
-        __level = Level.new("level1")
+        __gameState = GameState.new()
+        __gameState.switch(Level1)
     }
 
     init() {
@@ -22,11 +24,12 @@ class Main {
         if(Controls.detect(Config.KeyboardConstants["QUIT"])) {
             Process.exit(0)
         }
+        __gameState.update()
     }
 
-    draw(alpha) {
+    draw(dt) {
         Canvas.cls(Color.pink)
-        __level.draw(0,0)
+        __gameState.draw(dt)
     }
 }
 
