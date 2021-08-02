@@ -4,31 +4,33 @@ import "graphics" for Canvas, Color
 import "dome" for Window, Process
 import "math" for Math
 import "config" for Config
-import "input" for Keyboard
 import "./controls" for Controls
 import "./game_state" for GameState
-import "./levels/level1" for Level1
+import "./levels/menu" for Menu
 
 class Main {
     construct new() {
-        Config.setup()
-        __gameState = GameState.new()
-        __gameState.switch(Level1)
     }
 
     init() {
-
+        Config.new()
+        __gameState = GameState.new()
+        __gameState.switch(Menu)
     }
 
     update() {
-        if(Controls.detect(Config.KeyboardConstants["QUIT"])) {
+        if(Controls.isKeyDown(Config.KeyboardConstants["QUIT"])) {
             Process.exit(0)
+        }
+
+        if(Controls.justPressed(Config.KeyboardConstants["FULLSCREEN"])) {
+            __gameState.toggleFullscreen()
         }
         __gameState.update()
     }
 
     draw(dt) {
-        Canvas.cls(Color.pink)
+        Canvas.cls(Color.black)
         __gameState.draw(dt)
     }
 }

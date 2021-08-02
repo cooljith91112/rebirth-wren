@@ -1,9 +1,16 @@
 import "graphics" for Canvas
 import "dome" for Window
+import "font" for Font
+
 class Config {
     construct new() {
-
+        __width = 320
+        __height = 240
+        setup()
     }
+
+    static W {__width}
+    static H {__height}
 
     static KeyboardConstants {
         return {
@@ -14,26 +21,24 @@ class Config {
             "PICK" : "c",
             "SELECT": "z",
             "ATTACK": "x",
-            "QUIT": "escape"
+            "QUIT": "escape",
+            "FULLSCREEN": "f"
         }
     }
 
-    static setup() {
-        Window.resize(800, 600)
-        Canvas.resize(800, 600)
-        Window.title = "REBIRTH"
+    setup() {
+        setupWindow()
+        setupFonts()
     }
 
-    // static KeyboardConstants() {
-    //     return {
-    //         "UP": "up",
-    //         "DOWN": "down",
-    //         "LEFT": "left",
-    //         "RIGHT": "right",
-    //         "PICK" : "c",
-    //         "SELECT": "z",
-    //         "ATTACK": "x",
-    //         "QUIT": "esc"
-    //     }
-    // }
+    setupWindow() {
+        Window.resize(__width*2, __height*2)
+        Canvas.resize(__width, __height)
+        Window.title = "REBIRTH"
+    }
+    
+    setupFonts() {
+        Font.load("font_medium", "assets/fonts/lunchds.ttf", 20)
+        Font.load("font_small", "assets/fonts/lunchds.ttf", 16)
+    }
 }

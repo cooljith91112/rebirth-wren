@@ -5,7 +5,11 @@ class Controls {
 
     }
 
-    static detect(keyCode) {    
+    static isKeyDown(keyCode) {
         return Keyboard.isKeyDown(keyCode)
+    }
+
+    static justPressed(keyCode) {
+        return Keyboard[keyCode].justPressed
     }
 }
