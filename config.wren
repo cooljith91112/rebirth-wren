@@ -38,7 +38,6 @@ class Config {
     }
     
     setupFonts() {
-        Font.load("font_medium", "assets/fonts/lunchds.ttf", 20)
-        Font.load("font_small", "assets/fonts/lunchds.ttf", 16)
+        Font.load("font_title", "assets/fonts/lunchds.ttf", 20)
     }
 }

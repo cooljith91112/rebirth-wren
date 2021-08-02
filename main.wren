@@ -6,7 +6,7 @@ import "math" for Math
 import "config" for Config
 import "./controls" for Controls
 import "./game_state" for GameState
-import "./levels/menu" for Menu
+import "./screens/menu_screen" for MenuScreen
 
 class Main {
     construct new() {
@@ -15,7 +15,7 @@ class Main {
     init() {
         Config.new()
         __gameState = GameState.new()
-        __gameState.switch(Menu)
+        __gameState.switch(MenuScreen)
     }
 
     update() {
