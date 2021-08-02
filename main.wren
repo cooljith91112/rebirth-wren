@@ -1,25 +1,17 @@
 import "graphics" for ImageData
 import "json" for Json
 import "graphics" for Canvas, Color
-import "./layerType" for LayerType
-import "dome" for Window
+import "dome" for Window, Process
 import "math" for Math
+import "config" for Config
+import "input" for Keyboard
+import "./controls" for Controls
+import "./level" for Level
+
 class Main {
     construct new() {
-        _tileSheet = ImageData.loadFromFile("assets/tilemap_packed.png")
-        _tileSheetH = 128
-        _tileSheetW = 272
-        _tileH = 16
-        _tileW = 16
-        _rows = _tileSheetW/_tileW
-        _cols = _tileSheetH/_tileH
-        _levelData = Json.load("assets/level1.json")
-        _levelHeight = _levelData["tileheight"]
-        _levelWidth = _levelData["tilewidth"]
-        _layers = _levelData["layers"]       
-        Window.resize(256, 256)
-        Canvas.resize(256, 256)
-        
+        Config.setup()
+        __level = Level.new("level1")
     }
 
     init() {
@@ -27,45 +19,14 @@ class Main {
     }
 
     update() {
-
-    }
-
-    drawTile(tileIndex, mapX, mapY) {
-        var spriteX = (tileIndex % _rows)
-        var spriteY = Math.floor ((tileIndex - spriteX) % _cols)
-        _tileSheet.transform({
-            "srcX": spriteX * 16,
-            "srcY": spriteY * 16,
-            "srcW": _tileW,
-            "srcH": _tileH,
-            "scaleX": 1,
-            "scaleY": 1
-        }).draw(mapX*16,mapY*16)
-    }
-
-    drawLevel(x, y) {
-        for(layer in _layers) {
-            var index = 0        
-            for(levelY in 0...(_levelHeight)) {
-                for(levelX in 0...(_levelWidth)) {                    
-                    if((layer["type"] == LayerType.Tile) && (layer["visible"] == true)) {
-                        var tileIndex = layer["data"][index]
-                        if (tileIndex > 0) {
-                            drawTile(tileIndex-1, levelX, levelY)
-                        }
-                    }
-                  index = index + 1
-                }
-            }
+        if(Controls.detect(Config.KeyboardConstants["QUIT"])) {
+            Process.exit(0)
         }
     }
 
-    getTile() {
-
-    }
-
     draw(alpha) {
-        drawLevel(0,0)
+        Canvas.cls(Color.pink)
+        __level.draw(0,0)
     }
 }
 
