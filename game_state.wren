@@ -11,7 +11,8 @@ class GameState {
         AudioEngine.load("select","assets/sfx/select.wav")
         AudioEngine.load("credit","assets/musics/Juhani Junkala [Retro Game Music Pack] Ending.wav")
         _fullScreen = false
-
+        _entities = []
+        _collidables = []
         setupStates()
     }
 
@@ -31,15 +32,49 @@ class GameState {
 
     switch(level) {
         AudioEngine.stopAllChannels()
+        _entities.clear()
+        _collidables.clear()
         _currentLevel = __gameStates[level].new(this)
         System.print("Current Level : %(__gameStates[level].name)")
     }
 
     update() {
         _currentLevel.update()
+        for(entity in _entities) {
+            entity.update()
+        }
     }
 
     draw(dt) {
         _currentLevel.draw(dt)
+        for(entity in _entities) {
+            entity.draw(dt)
+        }
+    }
+
+    addEntities(entity) {
+        _entities.add(entity)
+    }
+
+    addCollidable(collidable) {
+        _collidables.add(collidable)
+    }
+
+    checkCollision(entity) {
+        var collide = false
+        for(collidable in _collidables) {
+            System.print(entity.x)
+            var entityX = entity.x
+            var entityY = entity.y
+            if(entityX < (collidable["x"] + collidable["width"]) &&
+                (entityX + entity.w) > collidable["x"] &&
+                entityY < (collidable["y"] + collidable["height"]) &&
+                (entityY + entity.h) > collidable["y"]) {
+                collide = true
+                break
+            }
+        }
+
+        return collide
     }
 }

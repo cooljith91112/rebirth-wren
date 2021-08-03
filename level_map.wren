@@ -4,7 +4,8 @@ import "math" for Math
 import "./layer_type" for LayerType, ObjectType
 import "./entities/player_entity" for Player
 class LevelMap {
-    construct new(mapName) {
+    construct new(mapName, gameState) {
+        __gameState = gameState
         _mapData = Json.load("assets/%(mapName).json")
         var tileSheetData =  _mapData["tilesets"][0] // Assuming there is only a single tilesheet/level
         _tileSheet = ImageData.loadFromFile("assets/%(tileSheetData["image"])")
@@ -21,8 +22,8 @@ class LevelMap {
             "x": 0,
             "y": 0
         }
+        _levelEntities = []
         placeObjects()
-
     }
 
     playerPos = (position) { 
@@ -40,22 +41,24 @@ class LevelMap {
                             "x": object["x"],
                             "y": object["y"]
                         }
-                        _player = Player.new(playerPos["x"], playerPos["y"])                        
+                        _player = Player.new(playerPos["x"], playerPos["y"], __gameState)
+                        __gameState.addEntities(_player)
+                    }
+
+                    if(object["type"]==ObjectType.COLLIDER) {
+                        __gameState.addCollidable({
+                            "x": Math.floor(object["x"]),
+                            "y": Math.floor(object["y"]), 
+                            "width": Math.floor(object["width"]),
+                            "height": Math.floor(object["height"])
+                        })
                     }
                 }
             }
         }
     }
 
-    draw(dt) {
-        _player.draw(dt)
-    }
-
-    update() {
-        _player.update()
-    }
-
-    render(x, y) {
+    draw(x, y) {
         var startX = x
         var startY = y
         for(layer in _layers) {

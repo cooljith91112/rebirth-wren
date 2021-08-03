@@ -8,4 +8,5 @@ class ObjectType {
     static PLAYER { "player" }
     static NPC { "npc" }
     static ENEMY { "enemy" }
+    static COLLIDER { "collider" }
 }
