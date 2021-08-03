@@ -39,5 +39,6 @@ class Config {
     
     setupFonts() {
         Font.load("font_title", "assets/fonts/lunchds.ttf", 20)
+        Font.load("font_minecraft", "assets/fonts/dogicapixel.ttf", 8)
     }
 }

@@ -1,42 +1,41 @@
 import "graphics" for Canvas, Color
 import "./controls" for Controls
-import "config" for Config
-import "levels/level1" for Level1
-import "screens/credit_screen" for CreditScreen
+import "./config" for Config
 import "audio" for AudioEngine
 import "font" for Font
 import "math" for Math
+import "dome" for Platform
 
 class MenuScreen {
     construct new(gameState) {
         __gameState = gameState
-        // var channel = AudioEngine.play("menu_music")
-        // channel.volume = 0.5
+        var channel = AudioEngine.play("menu_music", 0.5, true)
         _selectedMenuIdx = 0
         _prevMenuIdx = 0
         _fadeFrame = 255
+        _fadeSelector = 255
         _menuItems =  [
             {
                 "name": "Start",
                 "selected": true,
-                "class": Level1,
+                "state": "level1",
                 "font": Font.default,
                 "padding": 20
             },
             {
                 "name": "Credits",
                 "selected": false,
-                "class": CreditScreen,
+                "state": "credit",
                 "font": Font.default,
                 "padding": 40
             }
         ]
-
+        _time = 0
     }
 
     update() {
-        if(Controls.isKeyDown(Config.KeyboardConstants["SELECT"])) {
-            __gameState.switch(Level1)
+        if(Controls.justPressed(Config.KeyboardConstants["ATTACK"])) {
+            __gameState.switch(_menuItems[_selectedMenuIdx]["state"])
         }
 
         if(Controls.justPressed(Config.KeyboardConstants["UP"])) {
@@ -63,11 +62,13 @@ class MenuScreen {
             _menuItems[_prevMenuIdx]["selected"] = false
             _menuItems[_selectedMenuIdx]["selected"] = true
         }
-
-        // _fadeFrame = (_fadeFrame+3) > 255 ? 0 : _fadeFrame + 3
-
         _fadeFrame = Math.floor(127 + (127 * Math.cos(System.clock)))
-        System.print(_fadeFrame)
+        _fadeSelector = inOutQuad(_time, 0, 255, 50)
+        if (_time>51) {
+            _time = 0
+        } else {
+            _time = _time + 1
+        }
     }
 
     draw(dt) {
@@ -90,14 +91,25 @@ class MenuScreen {
         var y = Config.H/2 + menuItem["padding"]
         Canvas.print(menuItem["name"],x ,y , menuItem["selected"] ? Color.red : Color.white, menuItem["font"])
         if(menuItem["selected"]) {
-            Canvas.print(">",x - 10 ,y , Color.red, menuItem["font"])
+            Canvas.print(">",x - 10 ,y , Color.new(255, 0, 77, _fadeSelector), menuItem["font"])
         }
-        // Canvas.print("Credits", Config.W/2 - 28, Config.H/2 + 40, Color.white, Font.default)
     }
 
     drawBlinker() {
-        Canvas.print("Press X to start",Config.W/2 - 64,Config.H/2 + 100, Color.new(255, 255, 255, _fadeFrame), Font.default)
+        Canvas.print("Press X to select",Config.W/2 - 64,Config.H/2 + 100, Color.new(255, 255, 255, _fadeFrame), Font.default)
     }
+
+    inOutQuad(t, b, c, d) {
+        t = t / d * 2
+        if( t < 1 ) {
+            return Math.abs(Math.floor(((c / 2) * (t.pow(2))) + b))
+        } else {
+            return  Math.abs(Math.floor(((-c / 2) * ((t - 1) * (t - 3) - 1)) + b))
+        }
+            
+        
+    }
+
 }
 
 /*

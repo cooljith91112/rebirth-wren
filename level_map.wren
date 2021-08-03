@@ -1,8 +1,8 @@
 import "json" for Json
 import "graphics" for ImageData
 import "math" for Math
-import "./layer_type" for LayerType
-
+import "./layer_type" for LayerType, ObjectType
+import "./entities/player_entity" for Player
 class LevelMap {
     construct new(mapName) {
         _mapData = Json.load("assets/%(mapName).json")
@@ -17,9 +17,45 @@ class LevelMap {
         _layers = _mapData["layers"]
         _rows = Math.floor(_tileSheetW/_tileW)
         _cols = Math.floor(_tileSheetH/_tileH)
+        _playerPos = {
+            "x": 0,
+            "y": 0
+        }
+        placeObjects()
+
     }
 
-    draw(x, y) {
+    playerPos = (position) { 
+        _playerPos = position
+    }
+
+    playerPos { _playerPos }
+    
+    placeObjects() {
+        for(layer in _layers) {
+            if(layer["type"] == LayerType.Object) {
+                for(object in layer["objects"]) {
+                    if(object["type"]==ObjectType.PLAYER) {
+                        playerPos = {
+                            "x": object["x"],
+                            "y": object["y"]
+                        }
+                        _player = Player.new(playerPos["x"], playerPos["y"])                        
+                    }
+                }
+            }
+        }
+    }
+
+    draw(dt) {
+        _player.draw(dt)
+    }
+
+    update() {
+        _player.update()
+    }
+
+    render(x, y) {
         var startX = x
         var startY = y
         for(layer in _layers) {
